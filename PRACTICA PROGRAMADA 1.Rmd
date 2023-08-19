@@ -131,6 +131,8 @@ DIRECTORES_Movie <- Datos_NETFLIX. |>
   top_n(10)
 ```
 
+
+
 j. Cuáles son los 10 directores con mayor cantidad de shows de TV (sin contar películas) en Netflix?
 Ordénelos por orden descendente.
 
@@ -151,3 +153,4 @@ MARZO_2020 <- Datos_NETFLIX. |>
   select(TITULO,TIPO,MES,AÑO)
 ```
 
+....
