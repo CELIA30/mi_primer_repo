@@ -128,8 +128,76 @@ CIUDADES_VALORES_ALTOS <- CALIDAD_AIRE |>
 ```
 
 ```{r}
-VALORES_ALTOS <- PROMEDIO_PAIS |>
+VALORES_ALTOS <- PROMEDIO_PAISES|>
   arrange(desc(PROMEDIO_AQI)) |> 
   head(10)
+
+Tabla_paises_altoAQI <- paises_altoAQI|> 
+  gt() |> 
+  tab_header(title = "Paises con alto AQI", 
+            subtitle = "Promedio AQI") 
+
+Tabla_paises_altoAQI
+```
+
+Para los 10 países con los valores promedios más altos de AQI, muestrelos en un mapa de leaflet usando
+addMarkers o un addCircles. En el popup debe colocar el valor promedio del AQI
+
+```{r}
+promedio_AQI <- air_quality_date |> 
+  group_by(Ciudad) |> 
+  summarise(Promedio_Ciudad = mean(AQI_Value))
+
+```
+
+```{r}
+ciudades_con_altoAQI <- promedio_AQI |> 
+  arrange(desc(Promedio_Ciudad)) |> 
+  head(10)
+```
+
+```{r}
+Ciudad_lat_long <-merge(ciudades_con_altoAQI,                         air_quality_date[c("Ciudad", "lat", "ing")], by = "Ciudad")
+```
+
+```{r}
+Ciudad_lat_long1 <- Ciudad_lat_long |> 
+  arrange(Promedio_Ciudad) |> 
+  head(10)
+```
+
+```{r}
+mapa_paises_altos <- Ciudad_lat_long1 |>
+  leaflet() |>
+  addTiles() |>
+  addMarkers(lng = ~ing, lat = ~lat, popup = ~Ciudad)
+
+mapa_paises_altos
+
+```
+
+Escriba el código que exporte los datos en un excel, de tal manera que cada pestaña tenga solamente
+los datos de una categoría de AQI. (Es decir una pestaña para las ciudades cuya categoría es “Good”
+o “Buena”, otra para los que la categoría es “Moderate” y así para cada cateoría) 
+
+```{r}
+air_excel <- list(
+  "Good" = air_quality_date |> 
+    filter(AQI_Category == "Good"),
+  
+  "Unhealthy for Sensitive Groups" = air_quality_date |> 
+    filter(AQI_Category == "Unhealthy for Sensitive Groups"),
+  
+  "Moderate" = air_quality_date |> 
+    filter(AQI_Category == "Moderate"),
+  
+  "Unhealthy" = air_quality_date |> 
+    filter(AQI_Category == "Unhealthy"),
+  
+  "Very Unhealthy" = air_quality_date |> 
+    filter(AQI_Category == "Very Unhealthy"),
+  
+  "Hazardous" = air_quality_date |> 
+    filter(AQI_Category == "Hazardous") 
 ```
 
